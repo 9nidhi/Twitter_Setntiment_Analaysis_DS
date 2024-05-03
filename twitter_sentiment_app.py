@@ -18,25 +18,30 @@ except Exception as e:
 # Set the maximum sequence length based on your training data
 max_length = 250
 
-# Create a function to predict sentiment
 def predict_sentiment(text):
-    # Ensure the input text is not empty
+    # Check if the input text is empty
     if not text:
         st.error("Input text is empty. Please provide valid input.")
         return None
 
     # Tokenize and pad the input text
-    sequences = tokenizer.texts_to_sequences([text])
-    if not sequences or len(sequences[0]) == 0:
-        st.error("Input text could not be tokenized properly.")
+    try:
+        sequences = tokenizer.texts_to_sequences([text])
+        padded = pad_sequences(sequences, maxlen=max_length, truncating='post')
+    except Exception as e:
+        st.error(f"Error tokenizing or padding input text: {e}")
         return None
-    
-    padded = pad_sequences(sequences, maxlen=max_length, truncating='post')
 
     # Predict the sentiment
-    prediction = model.predict(padded)
-    
+    try:
+        prediction = model.predict(padded)
+    except Exception as e:
+        st.error(f"Error making prediction: {e}")
+        return None
+
+    # Return the prediction
     return prediction
+
 
 # Set up Streamlit app
 st.title("Sentiment Analysis App")
