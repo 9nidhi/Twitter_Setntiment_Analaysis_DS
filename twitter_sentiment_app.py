@@ -3,32 +3,37 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from joblib import load
 
-# Load the model and tokenizer
-try:
-    model = tf.keras.models.load_model('sentiment_model.h5')
-except Exception as e:
-    st.error(f"Error loading model: {e}")
-    model = None  # Set model to None if there's an error
+# Load model and tokenizer
+model_path = 'sentiment_model.h5'
+tokenizer_path = 'tokenizer.joblib'
 
-try:
-    tokenizer = load('tokenizer.joblib')
-except Exception as e:
-    st.error(f"Error loading tokenizer: {e}")
-    tokenizer = None  # Set tokenizer to None if there's an error
+def load_model_and_tokenizer(model_path, tokenizer_path):
+    model = None
+    tokenizer = None
+    try:
+        model = tf.keras.models.load_model(model_path)
+        st.success("Model loaded successfully.")
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+
+    try:
+        tokenizer = load(tokenizer_path)
+        st.success("Tokenizer loaded successfully.")
+    except Exception as e:
+        st.error(f"Error loading tokenizer: {e}")
+
+    return model, tokenizer
+
+model, tokenizer = load_model_and_tokenizer(model_path, tokenizer_path)
 
 # Set the maximum sequence length based on your training data
 max_length = 250
 
-# Create a function to predict sentiment
+# Function to predict sentiment
 def predict_sentiment(text):
-    # Check if model and tokenizer are loaded
+    # Ensure model and tokenizer are loaded
     if model is None or tokenizer is None:
         st.error("Model or tokenizer not loaded properly.")
-        return None
-
-    # Check if the input text is empty
-    if not text:
-        st.error("Input text is empty. Please provide valid input.")
         return None
 
     # Tokenize and pad the input text
@@ -47,10 +52,10 @@ def predict_sentiment(text):
         st.error(f"Error making prediction: {e}")
         return None
 
-# Set up Streamlit app
+# Streamlit app setup
 st.title("Sentiment Analysis App")
 
-# Text input for user
+# Text input from the user
 user_input = st.text_area("Enter your text:")
 
 if st.button("Predict"):
