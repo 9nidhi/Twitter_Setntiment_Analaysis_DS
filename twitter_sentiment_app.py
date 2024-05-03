@@ -22,7 +22,7 @@ def predict_sentiment(text):
 
     # Predict the sentiment
     prediction = model.predict(padded)
-
+    print(prediction)
     return prediction
 
 # Set up Streamlit app
