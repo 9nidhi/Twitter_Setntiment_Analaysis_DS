@@ -6,10 +6,14 @@ from joblib import load
 # Load the model and tokenizer
 try:
     model = tf.keras.models.load_model('sentiment_model.h5')
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+
+try:
     tokenizer = load('tokenizer.joblib')
 except Exception as e:
-    st.error(f"Error loading model or tokenizer: {e}")
-    st.stop()
+    st.error(f"Error loading tokenizer: {e}")
+
 
 # Set the maximum sequence length based on your training data
 max_length = 250
