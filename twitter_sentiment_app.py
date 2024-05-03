@@ -9,6 +9,7 @@ from joblib import load
 try:
     model = tf.keras.models.load_model('sentiment_model.h5')
     tokenizer = load('tokenizer.joblib')
+    st.write(f"Loaded tokenizer: {type(tokenizer)}")
 except Exception as e:
     st.error(f"Error loading model: {e}")
 
