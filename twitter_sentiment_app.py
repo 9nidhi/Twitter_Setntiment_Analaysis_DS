@@ -3,17 +3,12 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from joblib import load
-
-import sys
-sys.stdout.flush()
-
 # from google.colab import drive
 # drive.mount('/content/drive')
 
 try:
     model = tf.keras.models.load_model('sentiment_model.h5')
     tokenizer = load('tokenizer.joblib')
-    st.write(f"Loaded tokenizer: {type(tokenizer)}")
 except Exception as e:
     st.error(f"Error loading model: {e}")
 
@@ -25,10 +20,9 @@ def predict_sentiment(text):
     sequences = tokenizer.texts_to_sequences([text])
     padded = pad_sequences(sequences, maxlen=max_length, truncating='post')
 
-    st.write(f"Prediction: {prediction}")
     # Predict the sentiment
     prediction = model.predict(padded)
-    st.write(f"Prediction: {prediction}")
+
     return prediction
 
 # Set up Streamlit app
