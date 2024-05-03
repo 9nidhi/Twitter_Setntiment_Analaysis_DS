@@ -3,30 +3,42 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from joblib import load
 
-# Load model and tokenizer
+# Define file paths for the model and tokenizer
 model_path = 'sentiment_model.h5'
 tokenizer_path = 'tokenizer.joblib'
 
+# Function to load model and tokenizer
 def load_model_and_tokenizer(model_path, tokenizer_path):
+    # Initialize model and tokenizer variables
     model = None
     tokenizer = None
+
+    # Load the model
     try:
         model = tf.keras.models.load_model(model_path)
         st.success("Model loaded successfully.")
     except Exception as e:
         st.error(f"Error loading model: {e}")
+        # Print debugging information
+        print(f"Error loading model from {model_path}: {e}")
+        return model, tokenizer
 
+    # Load the tokenizer
     try:
         tokenizer = load(tokenizer_path)
         st.success("Tokenizer loaded successfully.")
     except Exception as e:
         st.error(f"Error loading tokenizer: {e}")
+        # Print debugging information
+        print(f"Error loading tokenizer from {tokenizer_path}: {e}")
+        return model, tokenizer
 
     return model, tokenizer
 
+# Load the model and tokenizer
 model, tokenizer = load_model_and_tokenizer(model_path, tokenizer_path)
 
-# Set the maximum sequence length based on your training data
+# Define the maximum sequence length based on your training data
 max_length = 250
 
 # Function to predict sentiment
@@ -42,6 +54,8 @@ def predict_sentiment(text):
         padded = pad_sequences(sequences, maxlen=max_length, truncating='post')
     except Exception as e:
         st.error(f"Error tokenizing or padding input text: {e}")
+        # Print debugging information
+        print(f"Error tokenizing or padding input text: {e}")
         return None
 
     # Predict the sentiment
@@ -50,6 +64,8 @@ def predict_sentiment(text):
         return prediction
     except Exception as e:
         st.error(f"Error making prediction: {e}")
+        # Print debugging information
+        print(f"Error making prediction: {e}")
         return None
 
 # Streamlit app setup
