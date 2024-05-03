@@ -8,17 +8,24 @@ try:
     model = tf.keras.models.load_model('sentiment_model.h5')
 except Exception as e:
     st.error(f"Error loading model: {e}")
+    model = None  # Set model to None if there's an error
 
 try:
     tokenizer = load('tokenizer.joblib')
 except Exception as e:
     st.error(f"Error loading tokenizer: {e}")
-
+    tokenizer = None  # Set tokenizer to None if there's an error
 
 # Set the maximum sequence length based on your training data
 max_length = 250
 
+# Create a function to predict sentiment
 def predict_sentiment(text):
+    # Check if model and tokenizer are loaded
+    if model is None or tokenizer is None:
+        st.error("Model or tokenizer not loaded properly.")
+        return None
+
     # Check if the input text is empty
     if not text:
         st.error("Input text is empty. Please provide valid input.")
@@ -35,13 +42,10 @@ def predict_sentiment(text):
     # Predict the sentiment
     try:
         prediction = model.predict(padded)
+        return prediction
     except Exception as e:
         st.error(f"Error making prediction: {e}")
         return None
-
-    # Return the prediction
-    return prediction
-
 
 # Set up Streamlit app
 st.title("Sentiment Analysis App")
