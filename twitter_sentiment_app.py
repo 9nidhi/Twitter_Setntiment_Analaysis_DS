@@ -22,6 +22,10 @@ max_length = 250  # Adjust this value based on your training data
 # Define prediction function
 def predict_sentiment(text):
     try:
+        if tokenizer is None or model is None:
+            st.error("Model or tokenizer not loaded properly.")
+            return None
+
         # Tokenize and pad the input text
         sequences = tokenizer.texts_to_sequences([text])
         if not sequences:
@@ -29,14 +33,15 @@ def predict_sentiment(text):
             return None
 
         padded = pad_sequences(sequences, maxlen=max_length, truncating='post')
-        
+
         # Predict the sentiment
         prediction = model.predict(padded)
 
         return prediction
-    except Exception as e:
+    catch Exception as e:
         st.error(f"Error during prediction: {e}")
         return None
+
 
 # Set up Streamlit app
 st.title("Sentiment Analysis App")
