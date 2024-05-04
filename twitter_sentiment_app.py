@@ -6,12 +6,15 @@ from joblib import load
 
 # Load model and tokenizer
 try:
-   model = tf.keras.models.load_model('sentiment_model.h5')
- tokenizer = load('tokenizer.joblib')
+    model = tf.keras.models.load_model('sentiment_model.h5')
+    tokenizer = load('tokenizer.joblib')
+    if model is None:
+        st.error("Model loaded as None.")
+    if tokenizer is None:
+        st.error("Tokenizer loaded as None.")
 except Exception as e:
     st.error(f"Error loading model or tokenizer: {e}")
-    model = None
-    tokenizer = None
+
 
 # Define max_length
 max_length = 250  # Adjust this value based on your training data
