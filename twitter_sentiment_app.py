@@ -6,7 +6,7 @@ from joblib import load
 
 # Load model and tokenizer
 try:
-    model = tf.keras.models.load_model('sentiment_model.h5')
+   model = tf.keras.models.load_model('sentiment_model.h5')
     tokenizer = load('tokenizer.joblib')
 except Exception as e:
     st.error(f"Error loading model or tokenizer: {e}")
