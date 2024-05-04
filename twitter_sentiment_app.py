@@ -3,51 +3,61 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from joblib import load
 
-# Set up Streamlit app
-st.title("Sentiment Analysis App")
+# Global variables for model and tokenizer
+model = None
+tokenizer = None
 
 # Define max_length based on your training data
 max_length = 250
 
-# Load the pre-trained model and tokenizer
-try:
-    model_path = 'sentiment_model.h5'
-    tokenizer_path = 'tokenizer.joblib'
-    model = tf.keras.models.load_model(model_path)
-    tokenizer = load(tokenizer_path)
-    
-    if model is None:
-        st.error("Model loaded as None.")
-    if tokenizer is None:
-        st.error("Tokenizer loaded as None.")
-except Exception as e:
-    st.error(f"Error loading model or tokenizer: {e}")
+# Function to load the model and tokenizer
+def load_model_and_tokenizer():
+    global model, tokenizer
+    try:
+        # Load the model and tokenizer
+        model = tf.keras.models.load_model('sentiment_model.h5')
+        tokenizer = load('tokenizer.joblib')
+        
+        # Check if loaded successfully
+        if model is None or tokenizer is None:
+            st.error("Model or tokenizer loaded as None.")
+            return False
+        
+        return True
+        
+    except Exception as e:
+        st.error(f"Error loading model or tokenizer: {e}")
+        return False
+
+# Call the function to load model and tokenizer
+load_success = load_model_and_tokenizer()
 
 # Function to predict sentiment
 def predict_sentiment(text):
+    # Check if model and tokenizer loaded successfully
+    if not load_success:
+        st.error("Model or tokenizer not loaded properly.")
+        return None
+    
     try:
-        if tokenizer is None or model is None:
-            st.error("Model or tokenizer not loaded properly.")
-            return None
-        
-        # Tokenize the input text
+        # Tokenize and pad the input text
         sequences = tokenizer.texts_to_sequences([text])
         if not sequences:
             st.error("Failed to tokenize the input text.")
             return None
         
-        # Pad the sequences
         padded = pad_sequences(sequences, maxlen=max_length, truncating='post')
         
         # Predict the sentiment
         prediction = model.predict(padded)
-        
-        # Return the prediction
         return prediction
     
     except Exception as e:
         st.error(f"Error during prediction: {e}")
         return None
+
+# Set up Streamlit app
+st.title("Sentiment Analysis App")
 
 # Get user input
 user_input = st.text_area("Enter your text:")
