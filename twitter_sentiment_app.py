@@ -38,10 +38,9 @@ def predict_sentiment(text):
         prediction = model.predict(padded)
 
         return prediction
-    catch Exception as e:
+    except Exception as e:
         st.error(f"Error during prediction: {e}")
         return None
-
 
 # Set up Streamlit app
 st.title("Sentiment Analysis App")
