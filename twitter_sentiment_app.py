@@ -1,13 +1,21 @@
 import streamlit as st
 import tensorflow as tf
-from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from joblib import load
 
-# Load model and tokenizer
+# Set up Streamlit app
+st.title("Sentiment Analysis App")
+
+# Define max_length based on your training data
+max_length = 250
+
+# Load the pre-trained model and tokenizer
 try:
-    model = tf.keras.models.load_model('sentiment_model.h5')
-    tokenizer = load('tokenizer.joblib')
+    model_path = 'sentiment_model.h5'
+    tokenizer_path = 'tokenizer.joblib'
+    model = tf.keras.models.load_model(model_path)
+    tokenizer = load(tokenizer_path)
+    
     if model is None:
         st.error("Model loaded as None.")
     if tokenizer is None:
@@ -15,48 +23,44 @@ try:
 except Exception as e:
     st.error(f"Error loading model or tokenizer: {e}")
 
-
-# Define max_length
-max_length = 250  # Adjust this value based on your training data
-
-# Define prediction function
+# Function to predict sentiment
 def predict_sentiment(text):
     try:
         if tokenizer is None or model is None:
             st.error("Model or tokenizer not loaded properly.")
             return None
-
-        # Tokenize and pad the input text
+        
+        # Tokenize the input text
         sequences = tokenizer.texts_to_sequences([text])
         if not sequences:
-            st.error("Tokenizer failed to process the input text.")
+            st.error("Failed to tokenize the input text.")
             return None
-
+        
+        # Pad the sequences
         padded = pad_sequences(sequences, maxlen=max_length, truncating='post')
-
+        
         # Predict the sentiment
         prediction = model.predict(padded)
-
+        
+        # Return the prediction
         return prediction
+    
     except Exception as e:
         st.error(f"Error during prediction: {e}")
         return None
 
-# Set up Streamlit app
-st.title("Sentiment Analysis App")
-
 # Get user input
 user_input = st.text_area("Enter your text:")
 
-# When the Predict button is clicked
+# Predict button
 if st.button("Predict"):
     if user_input:
         # Make a prediction
         prediction = predict_sentiment(user_input)
-
         if prediction is not None:
-            # Determine the sentiment
-            sentiment = ["Negative", "Neutral", "Positive"][prediction.argmax()]
+            # Determine the sentiment from the prediction
+            sentiment_labels = ["Negative", "Neutral", "Positive"]
+            sentiment = sentiment_labels[prediction.argmax()]
 
             # Display the sentiment
             st.write(f"Sentiment: {sentiment}")
