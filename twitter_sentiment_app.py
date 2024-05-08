@@ -108,7 +108,9 @@ st.markdown(
     /* background-color: rgba(233, 236, 237, 0); */
     box-shadow: rgba(0, 0, 0, 0.1) 5px 2px 10px;
 }}  
-
+.st-bv {{
+    caret-color: rgb(14, 17, 23);
+}}
 .st-emotion-cache-1om1ktf div {{
      border-width: none;
 }}
