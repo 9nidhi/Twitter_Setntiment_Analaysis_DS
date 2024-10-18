@@ -12,9 +12,9 @@ try:
 except Exception as e:
     st.error(f"Error loading model: {e}")
 
-max_length = 250  # Adjust this value based on your training data
+max_length = 250  
 
-# Create a function to predict sentiment
+
 def predict_sentiment(text):
     # Tokenize and pad the input text
     sequences = tokenizer.texts_to_sequences([text])
